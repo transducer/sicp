@@ -1,0 +1,54 @@
+#lang scheme
+
+; We have a reasonable mechanical way how procedures can evolve a
+; process. Now we are going to provide a way of pre-visualizing 
+; how programs will look for processes.
+
+;       Peano Arithmetic
+; Two ways to add whole numbers:
+
+; First two  not defined in Racket Scheme
+
+(define (-1+ x)
+  (- x 1))
+(define (1+ x); Helper methods not defined in Racket
+  (+ x 1))
+
+(define (add x y)
+  (if (= x 0)
+      y
+      (add (-1+ x) (1+ y))))
+; "Moving marbles from one pile to the other till you run out."
+
+; (+ 3 4)
+; (+ 2 5)
+; (+ 1 6)
+; (+ 0 7)
+; 7
+
+(add 3 4) ; => 7
+
+(define (add2 x y)
+  (if (= x 0)
+      y
+      (1+ (add2 (-1+ x) y))))
+; "Hold in your hand that what will be added later."
+
+; (+ 3 4)
+; (1+ (+ 2 4))
+; (1+ (1+ (+ 1 4)))
+; (1+ (1+ (1+ (0 4))))
+; (1+ (1+ (1+ (1+ 4)))
+; (1+ (1+ 5)
+; (1+ 6)
+; 7
+
+(add2 3 4) ; => 7
+
+; add1 is straight
+; add2 gets bigger and then smaller (things to be deferred)
+
+; Amount of steps is time, width is space
+
+
+
