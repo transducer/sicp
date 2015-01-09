@@ -22,3 +22,21 @@
 
 (sum 10)     ;; => 55
 (product 10) ;; => 3628800
+
+
+;; b) From iterative to recursive.
+
+(define (accumulate-recursive combiner null-value term a next b)
+    (if (> a b) 
+        null-value
+        (combiner (term a)
+         (accumulate-recursive 
+          combiner null-value term (next a) next b))))
+
+(define (sum-recursive x) 
+  (accumulate-recursive + 0 identity 0 inc x))
+(define (product-recursive x) 
+  (accumulate-recursive * 1 identity 1 inc x))
+
+(sum-recursive 10)     ;; => 55
+(product-recursive 10) ;; => 3628800
