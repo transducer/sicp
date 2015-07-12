@@ -10,7 +10,7 @@
         (else (element-of-set? x (cdr set)))))
 
 ;; The union set is the set containing each element that appears in either 
-;; argument (duplicates not removed):
+;; argument (no duplicates):
 (define (union-set a b) 
   (cond ((null? b) a) 
         ((element-of-set? (car b) a) (union-set a (cdr b))) 
