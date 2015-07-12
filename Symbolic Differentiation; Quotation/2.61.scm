@@ -13,15 +13,19 @@
         (else (element-of-set? x (cdr set)))))
 
 
-;; Faster adjoin: just use improved element-of-set? ?
+;; Ordered adjoin:
 (define (adjoin-set x set)
-  (if (element-of-set? x set)
-      set
-      (cons x set)))
+  (cond ((null? set) (list x))
+        ((< x (car set)) (cons x set))
+        ((= x (car set)) set)
+        (else (cons (car set) (adjoin-set x (cdr set))))))
+
 
 ;; Testing:
 (define a 6)
-(define b (list 3 4 5 6 7 8 9 10 11 12 13 14 15 16))
+(define b (list 3 4 5 7))
 
-(time (adjoin-set a b))
-;; => (2 3 4 5)
+(adjoin-set a b)
+;; => (3 4 5 6 7)
+(adjoin-set a '())
+;; => (6)
