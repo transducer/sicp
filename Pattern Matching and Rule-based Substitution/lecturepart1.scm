@@ -7,7 +7,7 @@
 ; What we did is translate the rules into the language of the computer.
 ; Why should we have to translate the rules to the language of the computer?
 
-; If it this do that, if it is that do this, a dispatch.
+; If it is this do that, if it is that do this, a dispatch.
 ; Well since it has such a stylized behaviour and structure, is there
 ; another way to write the same program?
 
@@ -45,7 +45,7 @@
 ; mathemathics I'd have to write a different program, while I want to
 ; encapsulate all the things that are common to both of these programs 
 ; matching, instantiating, et cetera, the control structure, to encapsulate
-; that seperately from the rules themselves.
+; that separately from the rules themselves.
 
 ; Representation of the rules of calculus in a simple language. Where we
 ; avoid worrying about syntax or type-setting (this ain't TeX).
@@ -103,19 +103,37 @@
 
 ; Here are some other rules. Algebraic manipulation rules for simpliyfing:
 
-(define algebra-rules '(
- ( ((? op) (?c e1) (?c e2))
-   (: (op e1 e2))                      )
- 
- ( ((? op) (? e1) (?c e2))
-   ((: op) (: e2) (? e1))              )
- 
- ( (+ 0 (? e))                   (: e) )
- 
- ( (+ 1 (? e))                   (: e) )
- 
- ( (* 0 (? e))                   0     )
- ))
+(define algebra-rules
+  '(
+    ( ((? op) (?c c1) (?c c2))                
+      (: (op c1 c2))                )
+    ( ((? op) (?  e ) (?c c ))                
+      ((: op) (: c) (: e))          )
+    ( (+ 0 (? e))                             
+      (: e)                         )
+    ( (* 1 (? e))                             
+      (: e)                         )
+    ( (* 0 (? e))                            
+      0                             )
+    ( (* (?c c1) (* (?c c2) (? e )))         
+      (* (: (* c1 c2)) (: e))       )
+    ( (* (?  e1) (* (?c c ) (? e2)))          
+      (* (: c ) (* (: e1) (: e2)))  )
+    ( (* (* (? e1) (? e2)) (? e3))            
+      (* (: e1) (* (: e2) (: e3)))  )
+    ( (+ (?c c1) (+ (?c c2) (? e )))          
+      (+ (: (+ c1 c2)) (: e))       )
+    ( (+ (?  e1) (+ (?c c ) (? e2)))          
+      (+ (: c ) (+ (: e1) (: e2)))  )
+    ( (+ (+ (? e1) (? e2)) (? e3))            
+      (+ (: e1) (+ (: e2) (: e3)))  )
+    ( (+ (* (?c c1) (? e)) 
+         (* (?c c2) (? e))) 
+      (* (: (+ c1 c2)) (: e))       )
+    ( (* (? e1) 
+         (+ (? e2) (? e3)))           
+      (+ (* (: e1) (: e2)))         )
+    ))
 
 ; What exactly these rules are does not really interest me. We want to
 ; simplify them.
