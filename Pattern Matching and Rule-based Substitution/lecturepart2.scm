@@ -1,9 +1,5 @@
 #lang scheme
 
-; Helpers
-(define (atom? x)
-  (not (list? x)))
-
 ; We now take a look at the matcher. It is a box that takes as his input
 ; an expression and a pattern, and a dictionary (mapping of pattern
 ; variables to the values that were found by matching) and it puts out
@@ -43,7 +39,7 @@
 
 ; If we are matching this against a pattern expression which matches it:
 
-(+ (* 3 x)) x)
+(+ (* 3 x) x)
 
 ; It is the sum of the product of 3 and x and x.
 ; What i want to do is traverse these two trees simultaneously.
@@ -61,7 +57,7 @@
 ; result of that is the dictionary for the match of the car and the cdr.
 ; And that is what is going to be returned as a value.
 
-; In any point a match might fail. It may be the case for example, if we
+; In any point a match might fail. This may be the case for example, if we
 ; look at an expression that does not quite match syntactically.
 ; When a match fails and it takes the dictionary from the previous match
 ; as input it must be able to propagate the failures. That is what the first
@@ -99,9 +95,9 @@
      'failed))
 
 ; If the pattern is an arbitrary constant it better be the case that the
-; expression is an arbitrary constant. If the pattern is not a constant then
-; that match fails. If it is a constant however I wish to extend the 
-; dictionary with that pattern being remembered being that expression using
+; expression is an arbitrary constant. If the expression is not a constant 
+; then that match fails. If it is a constant however I wish to extend the 
+; dictionary with that pattern being remembered being that expression, using
 ; the old dictionary as a starting point.
 
 ((arbitrary-variable? pat)
@@ -195,7 +191,7 @@
 
 ; Now we know about matching and instantiation. Are there any questions?
 
-; The idea is to failed back to the dictionary, is that right?
+; The idea is to pass failed back to the dictionary, is that right?
 ; => The dictionary is the answer to a match. Right? And it is either some
 ;    mapping, or there is no match. So what you are seeing is that because 
 ;    of the fact that the car can fail, the match of the cdr needs to
@@ -226,7 +222,7 @@
 ; => Yes, the pattern that is matched against the expression. You want to
 ;    have the pattern which happens to be in those cases pattern variables.
 ;    All of those three cases for extend-dict are pattern variables. So you
-;    you have a pattern variable that is going to be given a value in a
+;    have a pattern variable that is going to be given a value in a
 ;    dictionary. The value is the expression that it is matched against.
 ;    The dictionary is the set of things I have already figured out, that
 ;    I have memorized or learned. And I am going to make a new dictionary
