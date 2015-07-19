@@ -16,7 +16,7 @@
 ;; also want some kind of vertical barrier to keep representations apart.
 
 ;; Imagine you have a large company that has acquired other companies and
-;; you don't want to worry about the different divisions and how the record
+;; you don't want to worry about the different divisions and how the records
 ;; are stored. E.g., generic operators on name, salary and age.
 ;; You want to have vertical barriers. And you want name to be a generic
 ;; operator. Generic operator means that what it sort of precisely does is
@@ -249,7 +249,7 @@
 ;; Suppose we are looking at the complex number which real part 1 and
 ;; imaginary part 2i.
 
-;; That number above the abstraction barrier would be defined as `rectangular
+;; That number above the abstraction barrier would be defined as 'rectangular
 ;; and the 1 and 2.
 
 ;; The manager would look at it and strip off the type and hand down to 
