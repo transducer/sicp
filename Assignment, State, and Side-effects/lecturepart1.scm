@@ -190,7 +190,7 @@
 ; =>
 
 ((lambda (var1 var2)
-   er) 
+   e3) 
  e1
  e2)
 
