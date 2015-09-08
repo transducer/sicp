@@ -14,6 +14,14 @@
 ; ((acc 'some-other-password 'deposit) 50)
 ; "Incorrect password"
 
+;; Each call to acc returns the locally defined deposit or withdraw procedure, which is then 
+;; applied to the specified amount. As was the case with make-withdraw, another call to
+;; make-account
+
+; (define acc2 (make-account 100))
+
+;; will produce a completely separate account object, which maintains its own local balance.
+
 (define (make-account balance password)
   (define (withdraw amount)
     (if (>= balance amount)
@@ -33,6 +41,7 @@
 
 ; Testing
 (define acc (make-account 100 'secret-password))
+(define acc2 (make-account 100 'other-password))
 
 ((acc 'secret-password 'withdraw) 40)
 ; => 60
@@ -45,3 +54,6 @@
 
 ((acc 'secret-password 'deposit) 50)
 ; => 110
+
+((acc2 'other-password 'deposit) 50)
+; => 150
