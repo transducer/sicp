@@ -42,12 +42,6 @@
    (let ((range (- high low))) 
      (+ low (* (random) range)))) 
 
-(define 1+
-  (lambda (n) (+ n 1)))
-
-(define 1-
-  (lambda (n) (- n 1)))
-
 (define (monte-carlo trials experiment)
   (define (iter trials-remaining trials-passed)
     (cond ((= trials-remaining 0)
@@ -74,4 +68,4 @@
 (define pi (* 4 (estimate-integral P -1 1 -1 1 100000)))
 
 pi
-;=> ~3.14
+; => ~3.14
