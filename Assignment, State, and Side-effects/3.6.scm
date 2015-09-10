@@ -16,9 +16,8 @@
   (let ((x random-init))
     (define (dispatch m)
       (cond ((eq? m 'generate) 
-             (begin 
-               (set! x (rand-update x))
-               x))
+             (set! x (rand-update x))
+             x)
             ((eq? m 'reset) (lambda (n) (set! x n)))
             (else (error "RAND - invalid arg"))))
     dispatch))
