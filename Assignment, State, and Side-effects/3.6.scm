@@ -10,7 +10,7 @@
 ;; testing and debugging programs that use random numbers. 
 
 (define random-init 5)
-(define (rand-update x) (+ x 1)) ; incrementing, AKA pseudo random
+(define (rand-update x) (+ x 1)) ; incrementing, AKA pseudo random (for test)
 
 (define rand
   (let ((x random-init))
