@@ -16,12 +16,12 @@
 ; object-oriented programming.
 
 ; Let's look at the most wonderful objects: electrical systems. These are 
-; the physicist best objects. Over here I have a piece of machinery.
-; It's got electrical wire. One of the most wonderful properties of the
-; electrical world there are no connections between things accept for the
-; wires. The connection is clear. There are no other connections that
-; I know of. Making a knot in the wire does not matter either. The way that
-; the physics is arranged is that the connection can be made abstract.
+; the physicists' best objects. Over here I have a piece of machinery.
+; It's got electrical wires. One of the most wonderful properties of the
+; electrical world is that there are no connections between things except 
+; for the wires. The connection is clear. There are no other connections 
+; that I know of. Making a knot in the wire does not matter either. The way 
+; that the physics is arranged is that the connection can be made abstract.
 ; We have captured all of the connections there are.
 
 ; Let's talk about the most abstract type of physical objects: electrical
@@ -36,8 +36,8 @@
 (define e (make-wire))
 (define s (make-wire))
 
-(or-gate a b d)  ; Or gate with input wire a and b and output wire d.
-(and-gate a b c) ; And gate with input wire a and b and output wire c.
+(or-gate a b d)  ; OR gate with input wire a and b and output wire d.
+(and-gate a b c) ; AND gate with input wire a and b and output wire c.
 (inverter c e)
 (and-gate d e s)
 
@@ -75,9 +75,9 @@
 ; defines half-adder. Internal to that I make up some more wires. D and E
 ; which I am going to use for the interconnect. The interconnect that does
 ; not come through the walls of the box. And we wire things together as
-; we just saws.
+; we just saw.
 
-; The nice thing about is is that this language is hierarchical in the right
+; The nice thing about it is that this language is hierarchical in the right
 ; way. If a language is not hierarchical in the right way - if it turns out
 ; that a compound objects does not look like a primitive - there is
 ; something wrong with the language. (At least that is the way I feel about
@@ -87,11 +87,11 @@
 ; mathematical functions (what we had up to now), we are now starting
 ; things that are electrical objects and we are building up more electrical
 ; objects. And the glue we are using is basically the Lisp structure:
-; lambda's. Lambda is the ultimate glue.
+; lambdas. Lambda is the ultimate glue.
 
 ; And of course half-adder itself can be used in a more complicated 
-; abstraction like a full-adder. Two half-adder hooked together with an
-; or-gate that take some input numbers, a carry-in and produces output
+; abstraction like a full-adder. Two half-adders hooked together with an
+; OR gate that take some input numbers, a carry-in and produces output
 ; a sum and a carry-out.
 
 ; A full adder adds binary numbers and accounts for values carried in as 
@@ -109,7 +109,7 @@
     (half-adder a s sum c2)
     (or-gate c1 c2 c-out)))
 
-; Out of full-adders you can make adders chains and big adders...
+; Out of full-adders you can make adder chains and big adders...
 
 ; So we have a language that has primitives, means of combination and
 ; means of abstraction. It is a real language. So how are we going to
@@ -117,8 +117,7 @@
 
 ; Let's do it easily. The only problem is that we have to implement the
 ; primitives. Nothing else has to be implemented. :)
-
-; Because we are picking up the means of combination and means of 
+; This is because we are picking up the means of combination and means of 
 ; abstraction from Lisp. Inheririting them from the embedding.
 
 ; Let's look at the Inverter (a particular primitive).
@@ -153,7 +152,7 @@
 ; A very simple program. The output wire has to be sensitive though, so
 ; it might be that the output wire has to communicate further.
 
-; And we can look at things more complicated like and gates. And gates take
+; And we can look at things more complicated like AND gates. AND gates take
 ; two inputs and produce an output. Identical to what we just saw.
 
 (define (and-gate a1 a2 output)
@@ -190,10 +189,10 @@
 ; Radioshack for a few cents.
 
 ; Now, suppose I try to find the computational model which corresponds to
-; the above part of reality. Find relationships and abstractions in the
-; computer. That is the goal.
+; the above part of reality. Finding relationships and abstractions in the
+; computer is the goal.
 
-; I have some sort of thing called the signal a. And a signal b. Now these
+; I have some sort of thing called the signal a and a signal b. Now these
 ; signals can be hooked together in an AND gate. The 
 ; and-gate-action-procedure. Which is going to interact with a wire object
 ; which we call c. Which is going to connect to another action procedure
@@ -202,11 +201,11 @@
 ; What's inside this layer of stuff? There will be some variable inside 
 ; the signals that holds some value. So there must be some kind of 
 ; environment associated with it. For each one of each there must be
-; an environment that binds signal (a,b,c). Presumably signal is a variable
+; an environment that binds signal a, b, c. Presumably signal is a variable
 ; that is either 0 or 1.
 
 ; We also have to have some list of people to inform if the signal changes.
-; We have to inform AND for example. The action procedure (AP). It is
+; We have to inform AND for example. The action procedure (AP) is
 ; presumably a list, and the first thing on the list is to inform this (AND)
 ; guy.
 
@@ -214,19 +213,19 @@
 ; to it. And of course c and d also have some APs.
 
 ; It is also the case that when the AND procedures is awakened - one of the 
-; people you have told to wake you up when there signals changes wakes you
+; people you have told to wake you up when their signal changes wakes you
 ; up - you have to know what is their signal. So you can do the AND and
 ; produce a signal for c. So there has to be information in the AND like
 ; my a1 is this guy, and my a2 is this guy. And when I choose my AND
 ; I have to tell this guy something. So I need an output.
 
-; Similarly for Inverter. It needs an input that interrogates what the value
-; is, and when he gets that value he has to say "okay, output changes this
+; Similarly for INVERTER. It needs an input that interrogates what the value
+; is, and when he gets that value he has to say "Okay, output changes this
 ; guy", and so on. We need at least that much connectedness.
 
 ; Let's look at the AND gate above.
 
-; At the time and-gate is called a frame of a1 and a2 and output create a 
+; At the time and-gate is called, a1 and a2 and output create a 
 ; frame which binds the values to the wire values that were passed in.
 ; In that environment we construct the procedure and-action-procedure.
 ; The result of evaluating a lambda expression. It hangs on to the frame
@@ -239,25 +238,24 @@
   
   ; A wire needs two things that are part of it (its state): the signal
   ; and the action procedures of the wire.
-  (let ((signal 0) 
-        (action-procs '()))
+  (let ((signal 0) (action-procs '()))
     
     ; In that context we define various procedures
     ; One is called set-my-signal! to set a signal to a new value.
-    (define (set-my-signal! new)  ; It takes a new value
+    (define (set-my-signal! new)  ; It takes a new value.
       (cond ((= signal new)       ; If that is equal to the current value of
              'done)               ; my signal I am done.
             (else                 ; Otherwise,
              (set! signal new)    ; I set the signal to the new value
              (call-each action-procs)))) ; and call each of the action 
                                          ; procedures that I have been
-                                         ; introduced when the AND gate
+                                         ; introduced to when the AND gate
                                          ; was applied to me by add-action
                                          ; procedure at the bottom.
     
     ; Also, I need a way of accepting an action procedures.
     (define (accept-action-proc proc) ; Which increments the action
-      (set! action-procs              ; procedures using set
+      (set! action-procs              ; procedures using set!
             (cons proc action-procs)) ; to the result of consing up a new
       (proc))                         ; procedure which is passed to me to
                                       ; my action procedures list.
@@ -313,7 +311,7 @@
                                        ; use it to give it an action 
                                        ; procedure.
 
-; This is a real object. There is a few more details, like for example
+; This is a real object. There are a few more details, like for example
 ; how am I going to control this thing. How am I going to do these delays?
 ; Let's look at that:
 
@@ -349,7 +347,7 @@
                                           ; the propagation loop. 
 
 ; This is the overall structure of this thing. There are a few other things
-; we can look it, then we are going to look into the agenda.
+; we can look at, then we are going to look into the agenda.
 
 ; By the way, you may think that the simulator is very simple, and probably
 ; to simple to be useful. The fact of the matter is that this simulator
@@ -382,7 +380,7 @@
 ; a probe is an object that has the property that when you change a wire
 ; it is attached to it types out a message.
 
-; Once you call the probe one it says the current value of SUM at time 0
+; Once you call the probe it says the current value of SUM at time 0
 ; is 0. And the value of the carry at time 0 is 0.
 
 ; Then we go off and build some structure:
@@ -397,7 +395,7 @@
 (set-signal! input-2 1)
 
 (propagate)                  ; At time 11 the carry was one and the sum at
-; => CARRY 11  NEW-VALUE = 1 ; 16 was 0. This is true of the digital 
+; => CARRY 11  NEW-VALUE = 1 ; time 16 was 0. This is true of the digital 
 ;    SUM 16  NEW-VALUE = 0   ; circuitry. It works. That is the kind of 
 ;    DONE                    ; behaviour we get out of this thing.
 
@@ -409,7 +407,3 @@
 ; That is going to involve change and mutation of data and things like that.
 
 ; Questions? [Wait...] Thank you. Let's take a break.
-
-
-
-  
