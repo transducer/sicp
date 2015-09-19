@@ -10,6 +10,16 @@
   (let ((local-table (list '*table*)))
     (define (display-table )
       (display local-table))
+    (define (foldr op initial lst)
+      (if (null? lst)
+          initial
+          (op (car lst) (foldr op initial (cdr lst)))))
+    (define (add-keys-and-value keys value)
+      (cond ((null? keys)
+             (error "No key provided - ADD-KEYS-AND-VALUE"))
+            ((pair? keys)
+             (foldr list value keys))
+            (else (cons keys value))))
     (define (lookup key-list)
       (let loop ((remaining-key-list key-list)
                  (subtable (assoc (car key-list) (cdr local-table)))
@@ -23,11 +33,11 @@
                         (cdr local-table))
                   (cdr subtable))
               false))))
-    (define (insert! key-list value table)
+    (define (insert! key-list value)
       (let loop ((remaining-key-list key-list)
                  (key (car key-list))
-                 (record (assoc (car key-list) (cdr table)))
-                 (subtable table))
+                 (record (assoc (car key-list) (cdr local-table)))
+                 (subtable local-table))
         (if record
             (if (pair? record)
                 (loop (cdr remaining-key-list)
@@ -36,8 +46,7 @@
                       (cdr subtable))
                 (set-cdr! record value))
             (set-cdr! subtable
-                      (cons (cons key value) 
-                            (cdr subtable)))))
+                      (add-keys-and-value remaining-key-list value))))
       'ok)
     (define (dispatch m)
       (cond ((eq? m 'lookup-proc) lookup)
@@ -46,16 +55,24 @@
             (else (error "Unknown operation -- TABLE" m))))
     dispatch))
 
-(define (add-keys-and-value keys value)
-  (let loop ((keys keys)
-             (result (list '*table*)))
-    (if (not (pair? keys)) 
-        (cons result value)
-        (loop (cdr keys) (list (car keys) result)))))
 
-(define test (add-keys-and-value (list 'a 'b) 'hello))
+; Testing
 
-; (*table* (a (b . hello)))
-(display (list '*table* (list 'a (cons 'b 'hello))))
-(newline)
-(display test)
+(define t (make-table))
+(define get (t 'lookup-proc))
+(define put (t 'insert-proc!))
+(define display-table (t 'display-table))
+
+(put (list 'a 'b 'c) 'hello)
+; => 'ok
+
+(display-table)
+; => (*table* a (b (c hello)))... Should be (*table* (a (b (c hello))))!
+
+(get (list 'a 'b))
+
+
+
+
+
+
