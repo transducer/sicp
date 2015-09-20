@@ -25,18 +25,29 @@
                          local-table))
                   (else #f)))))
     (define (insert! keys value)
-      (define (foldl op acc lst)
-        (if (null? lst)
-            acc
-            (foldl op (op acc (car lst)) (cdr lst))))
-      (define (descend table key)
-        (let ((record (assoc key (cdr table))))
-          (if record
-              record
-              (let ((new (cons (list key) (cdr table))))
-                (set-cdr! table new)
-                (car new)))))
-      (set-cdr! (foldl descend local-table keys) value))
+      (begin
+        (let loop ((local-table local-table)
+                   (keys keys))
+          (let* ((key (car keys))
+                 (rest (cdr keys))
+                 (subtable (if (list? local-table)
+                               (assoc key (cdr local-table))
+                               #f)))
+            (if subtable
+                (if (null? rest)
+                    (set-cdr! subtable value)
+                    (loop subtable rest))
+                (cond ((and (null? rest) local-table)
+                       (set-cdr! local-table (list (cons key value))))
+                      ((null? rest)
+                       (cons key value))
+                      (local-table
+                       (set-cdr! local-table
+                                 (cons (list key (loop subtable rest))
+                                       (cdr local-table))))
+                      (else
+                       (cons key (list (loop subtable rest))))))))) 
+      'ok)
     (define (dispatch m)
       (cond ((eq? m 'lookup-proc) lookup)
             ((eq? m 'insert-proc!) insert!)
@@ -53,17 +64,16 @@
 (define display-table (t 'display-table))
 
 (put (list 'a 'b 'c) 'hello)
+; => 'ok
 (put (list 'd 'e) 'hi)
+; => 'ok
 
 (display-table)
-; => (*table* (d (e . hello)) (a (b (c . hello))))
+; => (*table* (d (e . hi)) (a (b (c . hello))))
 
 (get (list 'a 'b 'c))
 ; => 'hello
 (get (list 'd 'e))
 ; => 'hi
 (put (list 'a 'b 'c 'd) 'hi)
-; => ERROR mcar: contract violation 
-;    Seems like unwanted behaviour. Preferably it would be possible to add
-;    symbols to existing parts of a table. But for now I see no way on how
-;    to implement that.
+; => 'ok
