@@ -9,45 +9,34 @@
 (define (make-table)
   (let ((local-table (list '*table*)))
     (define (display-table )
-      (display local-table))
-    (define (lookup key-list)
-      (let loop ((remaining-key-list key-list)
-                 (subtable (assoc (car key-list) (cdr local-table)))
-                 (local-table (cdr local-table)))
-        (if subtable
-            (let ((record (assoc (cadr remaining-key-list) (cdr subtable))))
-              (if record
-                  (loop (cdr remaining-key-list)
-                        (assoc (caddr remaining-key-list) 
-                               (cdr local-table)) 
-                        (cdr local-table))
-                  (cdr subtable))
-              false))))
-    (define (insert! key-list value)
-      (define (foldr op initial lst)
+      (display local-table) 
+      (newline))
+    (define (lookup keys)
+      (if (null? keys)
+          (error "No keys provided -- LOOKUP")
+          (let loop ((record (assoc (car keys) (cdr local-table)))
+                     (remaining-keys keys)
+                     (local-table (cdr local-table)))
+            (cond ((and record (null? (cdr remaining-keys)))
+                   (cdr record))
+                  (record
+                   (loop (assoc (cadr remaining-keys) (cdr record))
+                         (cdr remaining-keys)
+                         local-table))
+                  (else #f)))))
+    (define (insert! keys value)
+      (define (foldl op acc lst)
         (if (null? lst)
-            initial
-            (op (car lst) (foldr op initial (cdr lst)))))
-      (define (add-keys-and-value keys value)
-        (cond ((null? keys)
-               (error "No key provided - ADD-KEYS-AND-VALUE"))
-              ((pair? keys)
-               (foldr list value keys))
-              (else (cons keys value))))
-      (let loop ((remaining-key-list key-list)
-                 (key (car key-list))
-                 (record (assoc (car key-list) (cdr local-table)))
-                 (subtable local-table))
-        (if record
-            (if (pair? record)
-                (loop (cdr remaining-key-list)
-                      (car remaining-key-list)
-                      (assoc (cadr remaining-key-list) (cddr subtable))
-                      (cdr subtable))
-                (set-cdr! record value))
-            (set-cdr! subtable
-                      (add-keys-and-value remaining-key-list value))))
-      'ok)
+            acc
+            (foldl op (op acc (car lst)) (cdr lst))))
+      (define (descend table key)
+        (let ((record (assoc key (cdr table))))
+          (if record
+              record
+              (let ((new (cons (list key) (cdr table))))
+                (set-cdr! table new)
+                (car new)))))
+      (set-cdr! (foldl descend local-table keys) value))
     (define (dispatch m)
       (cond ((eq? m 'lookup-proc) lookup)
             ((eq? m 'insert-proc!) insert!)
@@ -64,12 +53,21 @@
 (define display-table (t 'display-table))
 
 (put (list 'a 'b 'c) 'hello)
-; => 'ok
+(put (list 'd 'e) 'hi)
 
 (display-table)
-; => (*table* a (b (c hello)))... Should be (*table* (a (b (c hello))))!
+; => (*table* (d (e . hello)) (a (b (c . hello))))
 
-(get (list 'a 'b))
+(get (list 'a 'b 'c))
+; => 'hello
+(get (list 'd 'e))
+; => 'hi
+(put (list 'a 'b 'c 'd) 'hi)
+; => ERROR mcar: contract violation 
+;    Seems like unwanted behaviour. Preferably it would be possible to add
+;    symbols to existing parts of a table. But for now I see no way on how
+;    to implement that.
+
 
 
 
