@@ -67,10 +67,3 @@
 ;    Seems like unwanted behaviour. Preferably it would be possible to add
 ;    symbols to existing parts of a table. But for now I see no way on how
 ;    to implement that.
-
-
-
-
-
-
-
