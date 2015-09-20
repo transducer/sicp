@@ -24,10 +24,10 @@
 (probe "Square" B)
 ; => #<procedure:me>
 
-(set-value! B 10 'user)
+(set-value! A -10 'user)
 ; => 'done
 
 ; => Probe: Square = 100
 
 ; I don't see a serious flaw as long as you don't set B. Setting B is not
-; in the requirements.
+; in the requirements
