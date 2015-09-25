@@ -65,3 +65,7 @@
       'done
       (begin (proc (stream-car s))
              (stream-for-each proc (stream-cdr s)))))
+
+(define (display-stream s)
+  (stream-for-each display-line s))
+
