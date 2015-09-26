@@ -21,10 +21,9 @@
 ; The implementation...
 
 (define (partial-sums s)
-  (stream-cons
-   (stream-first s)
-   (add-streams (stream-rest s) 
-                (partial-sums s))))
+  (add-streams s 
+               (stream-cons 0 
+                            (partial-sums s))))
 
 
 ; Testing
