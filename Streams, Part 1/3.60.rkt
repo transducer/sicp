@@ -25,15 +25,8 @@
 (define sine-series
   (stream-cons 0 (integrate-series cosine-series)))
 
-; ... and exercise 3.55:
-
-(define (partial-sums s)
-  (add-streams s 
-               (stream-cons 0 
-                            (partial-sums s))))
 
 ; Solve:
-
 
 (define (mul-series s1 s2)
   (stream-cons 
@@ -54,4 +47,3 @@
 ;= > 0
 (stream-ref one 3)
 ;= > 0
-
