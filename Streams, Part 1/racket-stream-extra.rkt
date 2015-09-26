@@ -1,6 +1,9 @@
 (define (add-streams s1 s2) (stream-map + s1 s2))
+(define (mul-streams s1 s2) (stream-map * s1 s2))
+(define (div-streams s1 s2) (stream-map / s1 s2))
 (define (integers-from n) (stream-cons n (integers-from (+ n 1))))
 (define integers (integers-from 1))
+(define ones (stream-cons 1 ones))
 
 (define (stream-for-each proc s)
   (if (stream-empty? s)
