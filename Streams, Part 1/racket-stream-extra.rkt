@@ -11,7 +11,6 @@
 (define (display-line x) (newline) (display x))
 (define (display-stream s) (stream-for-each display-line s))
 
-
 (define (stream-map proc . argstreams)
   (if (stream-empty? (car argstreams))
       empty-stream
@@ -19,3 +18,6 @@
        (apply proc (map stream-first argstreams))
        (apply stream-map
               (cons proc (map stream-rest argstreams))))))
+
+(define (scale-stream s factor)
+  (stream-map (lambda (e) (* factor e)) s))
