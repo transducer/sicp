@@ -51,12 +51,12 @@
 ;    (5 6)
 ;    (6 6)
 
-; (1,100), car of pair is 1 gives second value of 2n-2 for n > 2 so the
-;          198th pair.
-; (99,100) One minus the length, so n(n+1)/2 -1 = 100(100+1)/2 -1 = 5049
-; (100,100 n(n+1)/2 = 100(100+1)/2 = 5050
+; (1,100),   car of pair is 1 gives second value of 2n-2 for n > 2 so the
+;            198th pair.
+; (100,99),  2^100-1
+; (100,100), 2^100
 
-; Full formula from wqzhang solution is:
+; Formula from wqzhang solution is:
 
 ; N(i,j) = 2^(i-1)(max(1,2(j-i))+1)-2
 
