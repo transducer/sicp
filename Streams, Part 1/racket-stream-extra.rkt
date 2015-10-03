@@ -24,3 +24,10 @@
 
 (define (scale-stream s factor)
   (stream-map (lambda (e) (* factor e)) s))
+
+(define (interleave s1 s2)
+  (if (stream-empty? s1)
+      s2
+      (stream-cons (stream-first s1)
+                   (interleave s2 (stream-rest s1)))))
+
