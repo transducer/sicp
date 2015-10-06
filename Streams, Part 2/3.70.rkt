@@ -1,4 +1,4 @@
-#lang racket
+sicp#lang racket
 
 (require racket/include)
 (include (file "../Streams, Part 1/racket-stream-extra.rkt"))
@@ -15,15 +15,7 @@
 ;; determine the order in which elements should appear in the resulting merged 
 ;; stream. Using this, generalize pairs to a procedure weighted-pairs that 
 ;; takes two streams, together with a procedure that computes a weighting 
-;; function, and generates the stream of pairs, ordered according to weight. 
-;; Use your procedure to generate
-
-;; a. the stream of all pairs of positive integers (i,j) with i < j ordered 
-;; according to the sum i + j
-
-;; b. the stream of all pairs of positive integers (i,j) with i < j, where 
-;; neither i nor j is divisible by 2, 3, or 5, and the pairs are ordered 
-;; according to the sum 2 i + 3 j + 5 i j. 
+;; function, and generates the stream of pairs, ordered according to weight.  
 
 (define (merge-weighted s1 s2 weight) 
   (cond ((stream-empty? s1) s2) 
@@ -31,11 +23,25 @@
         (else 
          (let ((s1car (stream-first s1)) 
                (s2car (stream-first s2))) 
-           (cond ((< s1car s2car) 
+           (cond ((< (weight s1car) (weight s2car)) 
                   (stream-cons s1car (merge (stream-rest s1) s2))) 
-                 ((> s1car s2car) 
+                 ((> (weight s1car) (weight s2car)) 
                   (stream-cons s2car (merge s1 (stream-rest s2)))) 
                  (else 
                   (stream-cons s1car 
                                (merge (stream-rest s1) 
                                       (stream-rest s2)))))))))
+
+;; Use your procedure to generate
+
+;; a. the stream of all pairs of positive integers (i,j) with i < j ordered 
+;; according to the sum i + j
+
+(define (positive-integers-ordered-by-sum-i-plus-j)
+  (define (weight pair)
+    (+ (car pair) (cdr pair)))
+  (merge-weighted integers integers weight))
+
+;; b. the stream of all pairs of positive integers (i,j) with i < j, where 
+;; neither i nor j is divisible by 2, 3, or 5, and the pairs are ordered 
+;; according to the sum 2 i + 3 j + 5 i j.
