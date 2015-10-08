@@ -1,4 +1,4 @@
-sicp#lang racket
+#lang racket
 
 (require racket/include)
 (include (file "../Streams, Part 1/racket-stream-extra.rkt"))
@@ -24,13 +24,26 @@ sicp#lang racket
          (let ((s1car (stream-first s1)) 
                (s2car (stream-first s2))) 
            (cond ((< (weight s1car) (weight s2car)) 
-                  (stream-cons s1car (merge (stream-rest s1) s2))) 
+                  (stream-cons s1car (merge-weighted (stream-rest s1) 
+                                                     s2 
+                                                     weight))) 
                  ((> (weight s1car) (weight s2car)) 
-                  (stream-cons s2car (merge s1 (stream-rest s2)))) 
+                  (stream-cons s2car (merge-weighted s1 
+                                                     (stream-rest s2)
+                                                     weight))) 
                  (else 
-                  (stream-cons s1car 
-                               (merge (stream-rest s1) 
-                                      (stream-rest s2)))))))))
+                  (stream-cons s1car (merge-weighted (stream-rest s1) 
+                                                     (stream-rest s2)
+                                                     weight))))))))
+
+(define (weighted-pairs s t weight)
+  (stream-cons
+   (list (stream-first s) (stream-first t))
+   (merge-weighted
+    (stream-map (lambda (x) (list (stream-first s) x))
+                (stream-rest t))
+    (weighted-pairs (stream-rest s) (stream-rest t) weight)
+    weight)))
 
 ;; Use your procedure to generate
 
@@ -39,9 +52,49 @@ sicp#lang racket
 
 (define (positive-integers-ordered-by-sum-i-plus-j)
   (define (weight pair)
-    (+ (car pair) (cdr pair)))
-  (merge-weighted integers integers weight))
+    (+ (car pair) (cadr pair)))
+  (weighted-pairs integers integers weight))
+
+(display-stream (positive-integers-ordered-by-sum-i-plus-j))
+; => (1 1)
+;    (1 2)
+;    (1 3)
+;    (1 4)
+;    (1 5)
+;    (1 6)
+;    (1 7)
+;    (1 8)
+;    (1 9)
+;    (1 10)
 
 ;; b. the stream of all pairs of positive integers (i,j) with i < j, where 
 ;; neither i nor j is divisible by 2, 3, or 5, and the pairs are ordered 
 ;; according to the sum 2 i + 3 j + 5 i j.
+
+(define (positive-integers-ordered-awesomely)
+  (define (weight pair)
+    (let ((i (car pair)) 
+          (j (cadr pair)))
+      (+ (* 2 i) (* 3 j) (* 5 i j))))
+  
+  (let ((integers-not-disivible-by-2-3-or-5
+         (stream-filter 
+          (lambda (e) (not (or (= (remainder e 2) 0)
+                               (= (remainder e 3) 0)
+                               (= (remainder e 5) 0))))
+          integers)))
+    (weighted-pairs integers-not-disivible-by-2-3-or-5 
+                    integers-not-disivible-by-2-3-or-5
+                    weight)))
+
+(display-stream (positive-integers-ordered-awesomely))
+; => (1 1)
+;    (1 7)
+;    (1 11)
+;    (1 13)
+;    (1 17)
+;    (1 19)
+;    (1 23)
+;    (1 29)
+;    (1 31)
+;    (7 7)
