@@ -1,10 +1,25 @@
 #lang planet neil/sicp
 
-; Source http://www.giovannisfois.net/content/sicp-exercise-433
+;; Ben Bitdiddle tests the lazy list implementation given above by evaluating the 
+;; expression
+
+; (car '(a b c))
+
+;; To his surprise, this produces an error. After some thought, he realizes that the 
+;; ``lists'' obtained by reading in quoted expressions are different from the lists 
+;; manipulated by the new definitions of cons, car, and cdr. Modify the evaluator's 
+;; treatment of quoted expressions so that quoted lists typed at the driver loop will 
+;; produce true lazy lists. 
+
+; Use http://www.giovannisfois.net/content/sicp-exercise-433
 
 (define apply-in-underlying-scheme apply)
 
 (define (eval exp env)
+  ;(newline)
+  ;(display "Eval:")
+  ;(display exp)
+  ;(newline)
   (cond ((self-evaluating? exp) exp)
         ((variable? exp) (lookup-variable-value exp env))
         ((quoted? exp) (text-of-quotation exp env))
@@ -34,8 +49,10 @@
                              (operands exp)
                              env))
 
+
         (else
           (error "M-Eval: Unknown expression type -- EVAL: " exp))))
+
 
 (define (metacircular-apply procedure arguments env)
   (cond ((primitive-procedure? procedure)
@@ -52,6 +69,7 @@
         (else
           (error
             "Unknown procedure type -- APPLY" procedure))))
+
 
 (define (list-of-values exps env)
   (if (no-operands? exps)
@@ -71,13 +89,14 @@
     (cons (actual-value (first-operand exps) env)
           (list-of-arg-values (rest-operands exps)
                               env))))
-
 (define (list-of-delayed-args exps env)
   (if (no-operands? exps)
     '()
     (cons (delay-it (first-operand exps) env)
           (list-of-delayed-args (rest-operands exps)
                                 env))))
+
+
 
 (define (delay-it exp env)
   (list 'thunk exp env))
@@ -96,6 +115,13 @@
 
 ;------------------------------------
 
+
+; (define (force-it obj)
+;   (if (thunk? obj)
+;     (actual-value (thunk-exp obj) (thunk-env obj))
+;     obj))
+
+
 (define (force-it obj)
   (cond ((thunk? obj)
          (let ((result (actual-value
@@ -109,12 +135,15 @@
          (thunk-value obj))
         (else obj)))
 
-;-----------------------------------------------
 
+
+;-----------------------------------------------
 (define (eval-if exp env)
   (if (true? (actual-value (if-predicate exp) env))
     (eval (if-consequent exp) env)
     (eval (if-alternative exp) env)))
+
+
 
 (define (eval-sequence exps env)
   (cond ((last-exp? exps) (eval (first-exp exps) env))
@@ -139,7 +168,7 @@
 
 
 ;-------------------------------
-; Syntax
+; Syntassi
 
 (define (self-evaluating? exp)
   (cond ((number? exp) true)
@@ -179,8 +208,10 @@
 (define (definition? exp)
   (tagged-list? exp 'define))
 
+
 (define (unbound? exp)
   (tagged-list? exp 'unbound))
+
 
 (define (definition-variable exp)
   (if (symbol? (cadr exp))
@@ -227,6 +258,7 @@
 (define (eval-and exp env)
   (eval-and-operands (operands exp) env))
 
+
 ;------------------
 
 (define (or? exp) (tagged-list? exp 'or))
@@ -240,6 +272,7 @@
     (if (true? (eval (first-operand exp) env))
       true
       (eval-or-operands (rest-operands exp) env))))
+
 
 ;-------------------
 
@@ -283,7 +316,7 @@
   (if (null? clauses)
     'false ; no else clause
     (let ((first (car clauses))
-          (first-actions (cond-actions (car clauses))) 
+          (first-actions (cond-actions (car clauses))) ;non posso usare first dentro il let....
           (rest (cdr clauses)))
 
       (if (cond-else-clause? first)
@@ -324,6 +357,7 @@
 (define (let-name exp)
   (cadr exp))
 
+
 (define (let-clauses exp)
   (if (named-let? exp)
     (caddr exp)
@@ -333,6 +367,7 @@
   (if (named-let? exp)
     (cdddr exp)
     (cddr exp)))
+
 
 (define (let-vars clauses)
   (map car clauses))
@@ -353,6 +388,7 @@
                       (let-body exp)))
           (let-values(let-clauses exp)))))
 
+
 (define (let*? exp)
   (tagged-list? exp 'let*))
 
@@ -368,6 +404,7 @@
 
 
 ;---------------
+
 
 (define (true? x)
   (not (eq? x false)))
@@ -444,6 +481,8 @@
       (error "M-Eval: Too many arguments supplied" vars vals)
       (error "M-Eval: Too few arguments supplied" vars vals))))
 
+
+
 (define (look-for-var var env)
   (define (env-loop env)
     (define (scan frame)
@@ -458,11 +497,13 @@
         (scan frame))))
   (env-loop env))
 
+
+
 (define (scan-out-defines exp-body)
   (let ((var-list '())
         (new-body '()))
     (define (scan-body token)
-      (cond ((definition? token) 
+      (cond ((definition? token) ;le definizioni di funzione 
              (set! var-list (cons (list (definition-variable token)  ''*unassigned*)  var-list))
              (list 'set! (definition-variable token) (definition-value token)))
             (else token)))
@@ -470,6 +511,12 @@
     (if (null? var-list)
       exp-body
       new-body)))
+
+
+
+
+
+
 
 (define (lookup-variable-value var env)
   (let ((token (look-for-var var env)))
@@ -491,6 +538,7 @@
       (add-binding-to-frame! var val (first-frame env))
       (set-cdr! token val))))
 
+
 (define (make-unbound var env)
   (define (scan frame)
     (cond ((or (null? frame) (null? (cdr frame)))
@@ -503,6 +551,11 @@
     (error "Unbound variable -- MAKE-UNBOUND!" var))
   (let ((frame (first-frame env)))
     (scan frame)))
+
+
+
+
+
 ;-----------------
 
 (define (setup-environment)
@@ -564,11 +617,17 @@
                    (newline)
                    (display (car '(a b c)))))
 
+
+;occorre rimuovere tutte le primitive che fanno riferimento alle operazioni sulle liste dello Scheme sottostante
+;occorre modificare quote, in modo tale che sia in grado di usare le cons, car e cdr "lazy".
+;trattandosi di procedure, dovremo passare env anche alla text-of-request
+
 (newline)
 (display program)
 (newline)
 (eval program the-global-environment)
 (newline)
+
 
 (driver-loop)
 
