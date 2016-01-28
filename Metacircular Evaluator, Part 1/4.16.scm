@@ -6,23 +6,23 @@
 ;; a.  Change lookup-variable-value (section 4.1.3) to signal an error if the value 
 ;; it finds is the symbol *unassigned*.
 
-; (define (lookup-variable-value var env)
-;   (define (env-loop env)
-;     (define (scan vars vals)
-;       (cond ((null? vars)
-;              (env-loop (enclosing-environment env)))
-;             ((eq? var (car vars))
-;              (let ((val (car vals)))
-;                (if (eq? val '*unassigned*)
-;                  (error "value is *unassigned*" var)
-;                  val)))
-;             (else (scan (cdr vars) (cdr vals)))))
-;     (if (eq? env the-empty-environment)
-;       (error "Unbound variable" var)
-;       (let ((frame (first-frame env)))
-;         (scan (frame-variables frame)
-;               (frame-values frame)))))
-;   (env-loop env))
+(define (lookup-variable-value var env)
+  (define (env-loop env)
+    (define (scan vars vals)
+      (cond ((null? vars)
+             (env-loop (enclosing-environment env)))
+            ((eq? var (car vars))
+             (let ((val (car vals)))
+               (if (eq? val '*unassigned*)
+                 (error "value is *unassigned*" var)
+                 val)))
+            (else (scan (cdr vars) (cdr vals)))))
+    (if (eq? env the-empty-environment)
+      (error "Unbound variable" var)
+      (let ((frame (first-frame env)))
+        (scan (frame-variables frame)
+              (frame-values frame)))))
+  (env-loop env))
 
 ;; b.  Write a procedure scan-out-defines that takes a procedure body and returns an 
 ;; equivalent one that has no internal definitions, by making the transformation 
@@ -41,26 +41,26 @@
                                       (definition-bodies '())
                                       (rest-of-body '()))
                    (if (null? body-elements)
-                       (transform-define-into-let definition-names 
-                                                  definition-bodies 
-                                                  rest-of-body)
-                       (let ((current-element (car body-elements)))
-                         (if (tagged-list? current-element 'define)
-                             (body-transform (cdr body-elements)
-                                             (cons (get-definition-name current-element) 
-                                                   definition-names)
-                                             (cons (get-definition-body current-element) 
-                                                   definition-bodies)
-                                             rest-of-body)
-                             (body-transform (cdr body-elements)
-                                             definition-names
-                                             definition-bodies
-                                             (cons current-element rest-of-body)))))))))
+                     (transform-define-into-let definition-names 
+                                                definition-bodies 
+                                                rest-of-body)
+                     (let ((current-element (car body-elements)))
+                       (if (tagged-list? current-element 'define)
+                         (body-transform (cdr body-elements)
+                                         (cons (get-definition-name current-element) 
+                                               definition-names)
+                                         (cons (get-definition-body current-element) 
+                                               definition-bodies)
+                                         rest-of-body)
+                         (body-transform (cdr body-elements)
+                                         definition-names
+                                         definition-bodies
+                                         (cons current-element rest-of-body)))))))))
 
 (define (tagged-list? exp tag)
   (if (pair? exp)
-      (eq? (car exp) tag)
-      false))
+    (eq? (car exp) tag)
+    false))
 
 (define (get-definition-name expr)
   (cadr expr))
@@ -78,19 +78,19 @@
   (let aux ((var-elements vars)
             (unassigned-vars '()))
     (if (null? var-elements)
-        unassigned-vars
-        (aux (cdr var-elements)
-             (cons (list (car var-elements) '*unassigned*) unassigned-vars)))))
+      unassigned-vars
+      (aux (cdr var-elements)
+           (cons (list (car var-elements) '*unassigned*) unassigned-vars)))))
 
 (define (make-sets vars vals)
   (let aux ((var-elements vars)
             (val-elements vals)
             (sets '()))
     (if (null? var-elements)
-        sets
-        (aux (cdr var-elements)
-             (cdr val-elements)
-             (cons (list 'set! (car var-elements) (car val-elements)) sets)))))
+      sets
+      (aux (cdr var-elements)
+           (cdr val-elements)
+           (cons (list 'set! (car var-elements) (car val-elements)) sets)))))
 
 (define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))
@@ -104,8 +104,8 @@
 
 (define (strip lst)
   (if (or (null? lst) (atom? lst) (not (null? (cdr lst))))
-      lst
-      (strip (car lst))))
+    lst
+    (strip (car lst))))
 
 ; testing
 (scan-out-defines '(lambda (a b)
