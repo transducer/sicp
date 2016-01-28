@@ -69,10 +69,10 @@
   (caddr expr))
 
 (define (transform-define-into-let definition-names definition-bodies rest-of-body)
-  (list (list 'let (make-unassigned-vars definition-names)
+  (list (append (list 'let (make-unassigned-vars definition-names))
               ; We need to flatten the lists once
-              (make-sets definition-names definition-bodies)
-              rest-of-body)))
+              (append (make-sets definition-names definition-bodies)
+              rest-of-body))))
 
 (define (make-unassigned-vars vars)
   (let aux ((var-elements vars)
@@ -95,25 +95,11 @@
 (define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))
 
-; Strip outer parentheses, see
-; http://stackoverflow.com/questions/7776678/
-; how-do-i-remove-surrounding-parentheses-in-a-nested-list-in-scheme-if-that-neste#7779942
-
-(define (atom? x)
-  (and (not (pair? x)) (not (null? x))))
-
-(define (strip lst)
-  (if (or (null? lst) (atom? lst) (not (null? (cdr lst))))
-    lst
-    (strip (car lst))))
-
 ; testing
 (scan-out-defines '(lambda (a b)
                      (define u 'u)
                      (define v 'v)
                      'e1))
-
-; Should be transformed into:
 
 ; => (lambda (a b)
 ;      (let ((u '*unassigned*)
@@ -122,17 +108,6 @@
 ;        (set! v 'v)
 ;        'e1))
 
-; But is transformed into:
-
-; (lambda (a b) 
-;   (let ((u *unassigned*) 
-;         (v *unassigned*)) 
-;     ((set! u (quote u)) 
-;      (set!  v (quote v))) 
-;     ((quote e1))))
-
-; TODO: find a way to get rid of extra parentheses (append* does not help)
-
 ;; c.  Install scan-out-defines in the interpreter, either in make-procedure or in 
 ;; procedure-body (see section 4.1.3). Which place is better? Why?
 
@@ -140,3 +115,4 @@
 
 (define (make-procedure parameters body env)
   (list 'procedure parameters (scan-out-defines body) env))
+
