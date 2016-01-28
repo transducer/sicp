@@ -16,11 +16,14 @@
 ; ;;; L-Eval input:
 ; (square (id 10))
 ; ;;; L-Eval value:
-; <response>
+with memoization:    100
+without memoization: 1
+
 ; ;;; L-Eval input:
 ; count
 ; ;;; L-Eval value:
-; <response>
+with memoization:    100
+without memoization: 2
 
 ;; Give the responses both when the evaluator memoizes and when it does not. 
 
