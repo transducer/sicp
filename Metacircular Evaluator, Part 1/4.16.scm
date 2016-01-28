@@ -80,7 +80,7 @@
     (if (null? var-elements)
       unassigned-vars
       (aux (cdr var-elements)
-           (cons (list (car var-elements) '*unassigned*) unassigned-vars)))))
+           (cons (list (car var-elements) ''*unassigned*) unassigned-vars)))))
 
 (define (make-sets vars vals)
   (let aux ((var-elements vars)
