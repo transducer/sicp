@@ -476,4 +476,13 @@ last-exp
 ; For some reason a lot of Lisp evaluators tended to work like that. The iterative
 ; procedures than build up stack. No clear reason for that.
 
-; 
+; Now we have translated the meta-circular evaluator into a register machine language and
+; we have thereby implemented all of Lisp. That's all we did. No more magic in the system.
+; Except maybe for how list structured memory works. All the tail recursion came from eval
+; being very careful saving only what it needs. Sometimes it pays to worry about
+; efficiency.
+
+; I hope you can believe someone can hold a Lisp evaluator in the palm of a hand.
+; *chip in hand*, more complicated than the evaluator I just show you.
+; 389 instructions of microcode. A total of 89.000 transistors.
+
