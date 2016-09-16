@@ -126,8 +126,8 @@
 
 (define (inverter in out) ; Two wires coming in, an in and an out
   (define (invert-in)     ; they know what to do when wires comes in.
-    (let ((new            
-           (logical not (get-signal in))))
+    (let ((new
+           (logical-not (get-signal in))))
       (after-delay inverter-delay
                    (lambda ()
                      (set-signal! out new)))))
